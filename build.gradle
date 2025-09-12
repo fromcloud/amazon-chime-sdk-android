@@ -53,6 +53,7 @@ allprojects {
         jcenter()
         flatDir {
             dirs '../amazon-chime-sdk/libs'
+            dirs '../app/libs'
         }
     }
     project.ext {

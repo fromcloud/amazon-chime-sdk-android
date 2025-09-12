@@ -82,6 +82,11 @@ android {
     defaultConfig {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
+
+    packagingOptions {
+        pickFirst '**/LICENSE.md'
+        pickFirst '**/LICENSE-notice.md'
+    }
 }
 
 tasks.withType(DokkaTask.class) {
@@ -112,8 +117,12 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest','creat
     description = "Generate Jacoco coverage reports after running tests."
 
     reports {
-        xml.setRequired(true)
-        html.setRequired(true)
+        xml {
+            required.set(true)
+        }
+        html {
+            required.set(true)
+        }
     }
 
     def fileFilter = ['**/R.class', '**/R$*.class', '**/BuildConfig.*', '**/Manifest*.*', '**/*Test*.*', 'android/**/*.*']
