@@ -1,82 +1,86 @@
 # Amazon Chime SDK for Android
-[Amazon Chime SDK Project Board](https://aws.github.io/amazon-chime-sdk-js/modules/projectboard.html)
+[Amazon Chime SDK 프로젝트 보드](https://aws.github.io/amazon-chime-sdk-js/modules/projectboard.html)
 
-> Note: If building with the SDK source code, the `development` branch contains bleeding-edge changes that may not build with the publically available Chime media library or may not be as stable as [public releases](https://github.com/aws/amazon-chime-sdk-android/releases).
+> 참고: SDK 소스 코드로 빌드하는 경우, `development` 브랜치에는 공개적으로 사용 가능한 Chime 미디어 라이브러리와 빌드되지 않거나 [공개 릴리스](https://github.com/aws/amazon-chime-sdk-android/releases)만큼 안정적이지 않을 수 있는 최신 변경 사항이 포함되어 있습니다.
 
-## Build video calling, audio calling, and screen sharing applications powered by Amazon Chime.
+## Amazon Chime을 기반으로 한 영상 통화, 음성 통화 및 화면 공유 애플리케이션 구축
 
-The Amazon Chime SDK for Android makes it easy to add collaborative audio calling,
-video calling, and screen share viewing features to Android applications by
-using the same infrastructure services that power meetings on the Amazon
-Chime service.
+### 🎯 원격 제어 기능 (Remote Control Features)
 
-This Amazon Chime SDK for Android works by connecting to meeting session
-resources that you have created in your AWS account. The SDK has everything
-you need to build custom calling and collaboration experiences in your
-Android application, including methods to: configure meeting sessions, list
-and select audio devices, switch video devices, start and stop screen share
-viewing, receive callbacks when media events occur such as volume changes,
-and manage meeting features such as audio mute and video tile bindings.
+이 프로젝트는 **Real Time Data Message**를 활용하여 회의 참석자의 마이크와 스피커를 원격으로 제어하는 기능을 포함합니다.
 
-We also have an [Amazon Chime SDK Project Board](https://aws.github.io/amazon-chime-sdk-js/modules/projectboard.html) where you can find community requests and their statuses.
+**주요 기능:**
+- 📢 **마이크 원격 제어**: 다른 참석자의 마이크 음소거/해제
+- 🔊 **스피커 원격 제어**: 다른 참석자의 스피커 비활성화/활성화
+- 🔄 **실시간 동기화**: 제어 명령이 즉시 대상 사용자에게 적용
+- 👥 **참석자 목록 통합**: Roster 화면에서 클릭으로 간편한 제어
 
-To get started, see the following resources:
+**구현 방식:**
+- `"remote_control"` 토픽을 통한 Real Time Data Message 전송
+- JSON 형태의 제어 명령 (`RemoteControlMessage`)
+- 자동 UI 업데이트 및 사용자 알림
+
+Android용 Amazon Chime SDK는 Amazon Chime 서비스의 회의를 지원하는 동일한 인프라 서비스를 사용하여 Android 애플리케이션에 협업 음성 통화, 영상 통화 및 화면 공유 보기 기능을 쉽게 추가할 수 있게 해줍니다.
+
+이 Android용 Amazon Chime SDK는 AWS 계정에서 생성한 회의 세션 리소스에 연결하여 작동합니다. SDK에는 회의 세션 구성, 오디오 장치 나열 및 선택, 비디오 장치 전환, 화면 공유 보기 시작 및 중지, 볼륨 변경과 같은 미디어 이벤트 발생 시 콜백 수신, 오디오 음소거 및 비디오 타일 바인딩과 같은 회의 기능 관리 등 Android 애플리케이션에서 사용자 정의 통화 및 협업 환경을 구축하는 데 필요한 모든 것이 포함되어 있습니다.
+
+또한 커뮤니티 요청과 그 상태를 확인할 수 있는 [Amazon Chime SDK 프로젝트 보드](https://aws.github.io/amazon-chime-sdk-js/modules/projectboard.html)도 있습니다.
+
+시작하려면 다음 리소스를 참조하세요:
 
 * [Amazon Chime](https://aws.amazon.com/chime)
-* [Amazon Chime Developer Guide](https://docs.aws.amazon.com/chime/latest/dg/what-is-chime.html)
-* [Amazon Chime SDK API Reference](http://docs.aws.amazon.com/chime/latest/APIReference/Welcome.html)
-* [SDK Documentation](https://aws.github.io/amazon-chime-sdk-android/amazon-chime-sdk/)
+* [Amazon Chime 개발자 가이드](https://docs.aws.amazon.com/chime/latest/dg/what-is-chime.html)
+* [Amazon Chime SDK API 참조](http://docs.aws.amazon.com/chime/latest/APIReference/Welcome.html)
+* [SDK 문서](https://aws.github.io/amazon-chime-sdk-android/amazon-chime-sdk/)
 
-And review the following guides:
+다음 가이드를 검토하세요:
 
-* [API Overview](guides/api_overview.md)
-* [Getting Started](guides/getting_started.md)
-* [Frequently Asked Questions (FAQ)](#frequently-asked-questions)
-* [Custom Video Sources, Processors, and Sinks](guides/custom_video.md)
-* [Video Pagination with Active Speaker-Based Policy](guides/video_pagination.md)
-* [Content Share](guides/content_share.md)
-* [Meeting Events](guides/meeting_events.md)
-* [Event Ingestion](guides/event_ingestion.md)
-* [Configuring Remote Video Subscription](guides/configuring_remote_video_subscription.md)
-* [Background Video Filters](guides/background_video_filters.md)
+* [API 개요](guides/api_overview.md)
+* [시작하기](guides/getting_started.md)
+* [자주 묻는 질문 (FAQ)](#자주-묻는-질문)
+* [사용자 정의 비디오 소스, 프로세서 및 싱크](guides/custom_video.md)
+* [활성 화자 기반 정책을 사용한 비디오 페이지네이션](guides/video_pagination.md)
+* [콘텐츠 공유](guides/content_share.md)
+* [회의 이벤트](guides/meeting_events.md)
+* [이벤트 수집](guides/event_ingestion.md)
+* [원격 비디오 구독 구성](guides/configuring_remote_video_subscription.md)
+* [배경 비디오 필터](guides/background_video_filters.md)
 
-## Setup
+## 설정
 
-> NOTE: If you just want to run demo application, skip to [Running the demo app](#running-the-demo-app)
+> 참고: 데모 애플리케이션만 실행하려면 [데모 앱 실행](#데모-앱-실행)으로 건너뛰세요
 
-To integrate the Amazon Chime SDK, include the main SDK, one media SDK, and optionally the machine learning module.
+Amazon Chime SDK를 통합하려면 메인 SDK, 미디어 SDK 중 하나, 그리고 선택적으로 머신러닝 모듈을 포함해야 합니다.
 
-### SDKs Modules
+### SDK 모듈
 
-| Modules                | Artifact                                            | Description                                                    |
+| 모듈                | 아티팩트                                            | 설명                                                    |
 |------------------------|-----------------------------------------------------|--------------------------------------------------------------- |
-| Main SDK (required)    | `amazon-chime-sdk`                                  | Meeting control, platform integration, and top-level APIs.     |
-| Media SDK (choose one) | `amazon-chime-sdk-media`                            | Full-featured for ARM devices.                                 |
-|                        | `amazon-chime-sdk-media-no-video-codecs`            | Audio only for ARM devices, smaller size.                      |
-|                        | `amazon-chime-sdk-media-x86-stub`                   | Full-featured for ARM devices, stubbed x86 support.            |
-|                        | `amazon-chime-sdk-media-no-video-codecs-x86-stub`   | Audio-only for ARM devices, stubbed x86 support, smaller size. |
-| ML SDK (optional)      | `amazon-chime-sdk-machine-learning`                 | Enables background blur and replacement.                       |
+| 메인 SDK (필수)    | `amazon-chime-sdk`                                  | 회의 제어, 플랫폼 통합 및 최상위 API.     |
+| 미디어 SDK (하나 선택) | `amazon-chime-sdk-media`                            | ARM 장치용 전체 기능.                                 |
+|                        | `amazon-chime-sdk-media-no-video-codecs`            | ARM 장치용 오디오 전용, 더 작은 크기.                      |
+|                        | `amazon-chime-sdk-media-x86-stub`                   | ARM 장치용 전체 기능, x86 스텁 지원.            |
+|                        | `amazon-chime-sdk-media-no-video-codecs-x86-stub`   | ARM 장치용 오디오 전용, x86 스텁 지원, 더 작은 크기. |
+| ML SDK (선택사항)      | `amazon-chime-sdk-machine-learning`                 | 배경 흐림 및 교체 기능 활성화.                       |
 
-> ⚠️ **Note on x86 stub variants**:  
-> These artifacts **fully support ARM devices**, but include **stubbed x86/x86_64 code** to support building universal APKs or App Bundles.  
-> They are **not intended to run on x86 emulators or devices**, as audio/video functionality is unavailable in x86 code.
+> ⚠️ **x86 스텁 변형에 대한 참고사항**:  
+> 이러한 아티팩트는 **ARM 장치를 완전히 지원**하지만, 범용 APK 또는 앱 번들 빌드를 지원하기 위해 **스텁된 x86/x86_64 코드**를 포함합니다.  
+> x86 코드에서는 오디오/비디오 기능을 사용할 수 없으므로 **x86 에뮬레이터나 장치에서 실행하기 위한 것이 아닙니다**.
 
+### 옵션 1: Maven Central을 통한 설치 (권장)
+메인 SDK는 기본적으로 전체 미디어 SDK(`amazon-chime-sdk-media`)와 ML SDK(`amazon-chime-sdk-machine-learning`)를 포함합니다.  
+다른 미디어 구현(예: 오디오 전용 또는 x86 호환)을 사용하려면 기본값을 **제외**하고 원하는 것을 명시적으로 추가해야 합니다.
 
+#### 사용 예시
+> `<version>`을 최신 [릴리스](https://github.com/aws/amazon-chime-sdk-android/releases/latest)의 최신 버전으로 교체하세요.
 
-### Option 1: Install via Maven Central (Recommended)
-The main SDK includes the full media SDK (`amazon-chime-sdk-media`) and ML SDK (`amazon-chime-sdk-machine-learning`) by default.  
-To use a different media implementation (e.g. audio only or x86 compatible), you must **exclude** the default and add your desired one explicitly.
-
-#### Usage examples
-> Replace `<version>` with the latest version from the latest [release](https://github.com/aws/amazon-chime-sdk-android/releases/latest).
-
-##### Full-feartured (ARM)
+##### 전체 기능 (ARM)
 
 ```groovy
 implementation 'software.aws.chimesdk:amazon-chime-sdk:<version>'
 ```
 
-##### Audio-only (ARM)
+##### 오디오 전용 (ARM)
 ```groovy
 implementation('software.aws.chimesdk:amazon-chime-sdk:<version>') {
     exclude group: 'software.aws.chimesdk', module: 'amazon-chime-sdk-media'
@@ -85,7 +89,7 @@ implementation('software.aws.chimesdk:amazon-chime-sdk:<version>') {
 implementation 'software.aws.chimesdk:amazon-chime-sdk-media-no-video-codecs:<media_version>'
 ```
 
-##### Full-featured (ARM) + x86 stub
+##### 전체 기능 (ARM) + x86 스텁
 ```groovy
 implementation('software.aws.chimesdk:amazon-chime-sdk:<version>') {
     exclude group: 'software.aws.chimesdk', module: 'amazon-chime-sdk-media'
@@ -93,7 +97,7 @@ implementation('software.aws.chimesdk:amazon-chime-sdk:<version>') {
 implementation 'software.aws.chimesdk:amazon-chime-sdk-media-x86-stub:<media_version>'
 ```
 
-##### Audio-only (ARM) + x86 stub
+##### 오디오 전용 (ARM) + x86 스텁
 ```groovy
 implementation('software.aws.chimesdk:amazon-chime-sdk:<version>') {
     exclude group: 'software.aws.chimesdk', module: 'amazon-chime-sdk-media'
@@ -102,24 +106,24 @@ implementation('software.aws.chimesdk:amazon-chime-sdk:<version>') {
 implementation 'software.aws.chimesdk:amazon-chime-sdk-media-no-video-codecs-x86-stub:<media_version>'
 ```
 
-### Option 2: Using AAR Files Directly
-To include the SDK binaries in your own project, follow these steps.
+### 옵션 2: AAR 파일 직접 사용
+SDK 바이너리를 자체 프로젝트에 포함하려면 다음 단계를 따르세요.
 
-#### Step 1: Download the binaries
+#### 1단계: 바이너리 다운로드
 
-Download the necessary `.aar` files from the latest [release](https://github.com/aws/amazon-chime-sdk-android/releases/latest), including:
+최신 [릴리스](https://github.com/aws/amazon-chime-sdk-android/releases/latest)에서 필요한 `.aar` 파일을 다운로드하세요:
 
 - `amazon-chime-sdk`
-- the media SDK variant you need
-- optionally, `amazon-chime-sdk-machine-learning`
+- 필요한 미디어 SDK 변형
+- 선택적으로 `amazon-chime-sdk-machine-learning`
 
-> **Note:** Do not mix binaries from different releases.
+> **참고:** 다른 릴리스의 바이너리를 혼합하지 마세요.
 
-Copy the `.aar` files into your app’s `libs` directory.
+`.aar` 파일을 앱의 `libs` 디렉토리에 복사하세요.
 
-#### Step 2: Update Gradle configuration
+#### 2단계: Gradle 구성 업데이트
 
-In your **project-level** `build.gradle`, add:
+**프로젝트 수준** `build.gradle`에 추가:
 
 ```groovy
 allprojects {
@@ -132,26 +136,26 @@ allprojects {
 }
 ```
 
-In your **app-level** build.gradle, add:
+**앱 수준** build.gradle에 추가:
 
 ```groovy
 dependencies {
     implementation(name: 'amazon-chime-sdk', ext: 'aar')
     implementation(name: '<chosen-media-aar-name>', ext: 'aar')
 
-    // Optional
+    // 선택사항
     implementation(name: 'amazon-chime-sdk-machine-learning', ext: 'aar')
 }
 ```
 
-Replace <chosen-media-aar-name> with the media SDK variant you downloaded, such as:
+<chosen-media-aar-name>을 다운로드한 미디어 SDK 변형으로 교체하세요:
 - amazon-chime-sdk-media
 - amazon-chime-sdk-media-no-video-codecs
 - amazon-chime-sdk-media-x86-stub
 - amazon-chime-sdk-media-no-video-codecs-x86-stub
 
-### Java Compatibility
-For Java 17 compatibility, add this inside your `app/build.gradle`:
+### Java 호환성
+Java 17 호환성을 위해 `app/build.gradle` 내부에 추가하세요:
 
 ```groovy
 android {
@@ -165,619 +169,58 @@ android {
 }
 ```
 
-## Running the demo app
+## 데모 앱 실행
 
-> NOTE: This is just to run demo application and use SDK as code instead of aar library.
+데모 앱을 실행하려면 다음 단계를 따르세요:
 
-To run the demo application, follow these steps.
+### 1단계: 서버 배포
 
-> NOTE: Please make sure that you are running on ARM supported devices (real devices) or simulator with arm supported. We do not support x86 currently, so simulators with x86 will not work.
+[amazon-chime-sdk-js](https://github.com/aws/amazon-chime-sdk-js) 저장소의 `demos/serverless` 디렉토리에 있는 서버리스 데모를 배포하세요. 자세한 지침은 [여기](https://github.com/aws/amazon-chime-sdk-js/tree/main/demos/serverless)를 참조하세요.
 
-### 1. Deploy serverless demo
+### 2단계: 앱 실행
 
-Deploy the serverless demo from [amazon-chime-sdk-js](https://github.com/aws/amazon-chime-sdk-js), which returns `https://xxxxx.xxxxx.xxx.com/Prod/`
+1. Android Studio에서 프로젝트를 엽니다
+2. 앱을 빌드하고 실행합니다
+3. 서버 URL을 입력하고 회의에 참가합니다
 
-Provide `https://xxxxx.xxxxx.xxx.com/Prod/` for mobile demo app.
+## 자주 묻는 질문
 
-### 2. Download binary
+### Amazon Chime SDK는 무엇인가요?
 
-Download `amazon-chime-sdk-media` binary from the latest [release](https://github.com/aws/amazon-chime-sdk-android/releases/latest).
+Amazon Chime SDK는 개발자가 자신의 애플리케이션에 실시간 음성, 비디오, 화면 공유 및 메시징 기능을 추가할 수 있게 해주는 서비스입니다.
 
-Download `amazon-chime-sdk-machine-learning` binary for machine learning features.
+### 이 SDK는 무료인가요?
 
-Unzip and copy the aar files to `amazon-chime-sdk-android/amazon-chime-sdk/libs`
+Amazon Chime SDK는 사용한 만큼 지불하는 요금제입니다. 자세한 요금 정보는 [Amazon Chime SDK 요금 페이지](https://aws.amazon.com/chime/chime-sdk/pricing/)를 참조하세요.
 
-### 3. Update demo app
+### 어떤 Android 버전이 지원되나요?
 
-Update `test_url` in `strings.xml` at the path `amazon-chime-sdk-android/app/src/main/res/values`
-with the URL of the serverless demo deployed in Step 1.
+Amazon Chime SDK for Android는 API 레벨 21 (Android 5.0) 이상을 지원합니다.
 
-> NOTE: use `https://xxxxx.xxxxx.xxx.com/Prod/`
+### 동시에 몇 명의 참가자를 지원하나요?
 
-## Reporting a suspected vulnerability
+Amazon Chime SDK는 최대 250명의 참가자가 참여하는 회의를 지원합니다. 비디오는 최대 25개의 타일을 동시에 표시할 수 있습니다.
 
-If you discover a potential security issue in this project we ask that you notify AWS/Amazon Security via our
-[vulnerability reporting page](http://aws.amazon.com/security/vulnerability-reporting/). Please do **not** create a public GitHub issue.
+### 네트워크 요구사항은 무엇인가요?
 
-## Usage
-  - [Starting a session](#starting-a-session)
-  - [Device](#device)
-  - [Audio](#audio)
-  - [Video](#video)
-  - [Screen and content share](#screen-and-content-share)
-  - [Metrics](#metrics)
-  - [Data Message](#data-message)
-  - [Stopping a session](#stopping-a-session)
-  - [Amazon Voice Focus](#amazon-voice-focus)
-  - [Custom Video Source](#custom-video-source)
-  - [Background Blur and Replacement](#background-blur-and-replacement)
+- 음성 통화: 최소 50kbps 업로드/다운로드
+- 비디오 통화: 최소 1Mbps 업로드/다운로드
+- 화면 공유: 추가로 1-2Mbps 업로드
 
-### Starting a session
+### 보안은 어떻게 보장되나요?
 
-#### Use case 1. Start a session.
+Amazon Chime SDK는 전송 중 및 저장 시 암호화를 제공합니다. 모든 미디어는 TLS 1.2를 사용하여 암호화되며, 회의 데이터는 AWS의 보안 인프라에 저장됩니다.
 
-You need to start the meeting session to start sending and receiving audio.
+## 기여하기
 
-Start a session with default configurations:
-```kotlin
-meetingSession.audioVideo.start()
-```
+이 프로젝트에 기여하고 싶으시다면 [CONTRIBUTING.md](CONTRIBUTING.md)를 참조하세요.
 
-Start a session with custom configurations:
+## 라이선스
 
-```kotlin
-meetingSession.audioVideo.start(audioVideoConfiguration)
-```
+이 라이브러리는 Apache 2.0 라이선스에 따라 라이선스가 부여됩니다. 자세한 내용은 LICENSE 파일을 참조하세요.
 
-These configurations are available in `audioVideoConfiguration`:
-- `audioMode`
-- `audioDeviceCapabilities`
-- `audioStreamType`
-- `audioRecordingPresetOverride`
-- `enableAudioRedundancy`
-- `reconnectTimeoutMs`
+## 지원
 
-AudioMode: The default audio format is Stereo/48KHz i.e Stereo Audio with 48KHz sampling rate (Stereo48K). Other supported audio formats include Mono/48KHz (Mono48K) or Mono/16KHz (Mono16K). You can specify a non-default audio mode in `AudioVideoConfiguration`, and then start the meeting session.
-
-AudioDeviceCapabilities: The default audio device capabilities are to have both the audio input and output devices enabled (`InputAndOutput`), i.e. both microphone and speaker are enabled. `InputAndOutput` will require `MODIFY_AUDIO_SETTINGS` and `RECORD_AUDIO` permissions. Other options are `OutputOnly` (microphone disabled and speaker enabled; requires `MODIFY_AUDIO_SETTINGS` permission) and `None` (both microphone and speaker disabled; does not require any audio permissions).
-
-AudioStreamType: The default value is ```VoiceCall```. The available options are ```VoiceCall``` and ```Music```, they are equivalent of `STREAM_VOICE_CALL` and `STREAM_MUSIC` respectively in [AudioManager](https://developer.android.com/reference/android/media/AudioManager). This configuration is for addressing the audio volume [issue](https://github.com/aws/amazon-chime-sdk-android/issues/296) on Oculus Quest 2. If you don't know what it is, you probably don't need to worry about it. For more information, please refer to Android documentation: [STREAM_VOICE_CALL](https://developer.android.com/reference/android/media/AudioManager#STREAM_VOICE_CALL), [STREAM_MUSIC](https://developer.android.com/reference/android/media/AudioManager#STREAM_MUSIC).
-
-> Note: Even though there are more available stream options in Android, currently only *STREAM_VOICE_CALL* and *STREAM_MUSIC* are supported in Amazon Chime SDK for Android.
-
-AudioRecordingPresetOverride: The default value is ```None```. The available options are ```None```, ```Generic```, ```Camcorder```, ```VoiceRecognition``` and ```VoiceCommunication```. These are equivalent to the options
-mentioned [here](https://android.googlesource.com/platform/frameworks/wilhelm/+/master/include/SLES/OpenSLES_AndroidConfiguration.h) under *Android AudioRecorder configuration*.
-
-EnableAudioRedundancy: The default value is true. When enabled, the SDK will send redundant audio data on detecting packet loss to help reduce its effects on audio quality. More details can be found in the
-*Redundant Audio* section.
-
-ReconnectTimeoutMs: The default value is 180,000ms. Use this configuration to control the session reconnect timeout due to poor network condition.
-
-#### Use case 2. Add an observer to receive audio and video session life cycle events.
-
-> Note: To avoid missing any events, add an observer before the session starts. You can remove the observer by calling meetingSession.audioVideo.removeAudioVideoObserver(observer).
-
-```kotlin
-val observer = object : AudioVideoObserver {
-    override fun onAudioSessionStartedConnecting(reconnecting: Boolean) {
-        if (reconnecting) {
-            // e.g. the network connection is dropped
-        }
-    }
-    override fun onAudioSessionStarted(reconnecting: Boolean) {
-        // Meeting session starts.
-        // Can use realtime, devices APIs.
-    }
-    override fun onAudioSessionDropped(reconnecting: Boolean) {}
-    override fun onAudioSessionStopped(sessionStatus: MeetingSessionStatus) {
-        // See the "Stopping a session" section for details.
-    }
-    override fun onAudioSessionCancelledReconnect() {}
-    override fun onConnectionRecovered() {}
-    override fun onConnectionBecamePoor() {}
-    override fun onVideoSessionStartedConnecting() {}
-    override fun onVideoSessionStarted(sessionStatus: MeetingSessionStatus) {
-        // Video session starts.
-        // Can use video APIs.
-    }
-    override fun onVideoSessionStopped(sessionStatus: MeetingSessionStatus) {}
-}
-
-meetingSession.audioVideo.addAudioVideoObserver(observer)
-```
-
-### Device
-
-#### Use case 3. List audio devices.
-
-List available audio devices for the meeting.
-
-```kotlin
-val audioDevices = meetingSession.audioVideo.listAudioDevices()
-
-// A list of MediaDevice objects
-audioDevices.forEach {
-    logger.info(TAG, "Device type: ${it.type}, label: ${it.label}")
-}
-```
-
-#### Use case 4. Choose an audio device by passing a `MediaDevice` object.
-
-> Note: You should call chooseAudioDevice after the session started, or it'll be a no-op. You should also call chooseAudioDevice with one of the devices returned from listAudioDevices.
-
-```kotlin
-// Filter out OTHER type which is currently not supported for selection
-val audioDevices = meetingSession.audioVideo.listAudioDevices().filter {
-    it.type != MediaDeviceType.OTHER
-}
-val device = /* An item from audioDevices */
-meetingSession.audioVideo.chooseAudioDevice(device)
-```
-
-#### Use case 5. Switch cameras.
-
-> Note: switchCamera() is a no-op if you are using a custom camera capture source. Please refer to the [Custom Video](https://github.com/aws/amazon-chime-sdk-android/blob/master/guides/custom_video.md#implementing-a-custom-video-source-and-transmitting) for more details.
-
-
-Switch between the front or back camera on the device, if available.
-
-```kotlin
-meetingSession.audioVideo.switchCamera()
-```
-
-#### Use case 6. Add an observer to receive the updated device list.
-
-Add a `DeviceChangeObserver` to receive a callback when a new audio device connects or when an audio device disconnects. `onAudioDeviceChanged` includes an updated device list.
-
-```kotlin
-val observer = object: DeviceChangeObserver {
-    override fun onAudioDeviceChanged(freshAudioDeviceList: List<MediaDevice>) {
-        // A list of updated MediaDevice objects
-        freshAudioDeviceList.forEach {
-            logger.info(TAG, "Device type: ${it.type}, label: ${it.label}")
-        }
-    }
-}
-
-meetingSession.audioVideo.addDeviceChangeObserver(observer)
-```
-
-#### Use case 7. Get currently selected audio device.
-
-> Note: `getActiveAudioDevice` API requires API level 24 or higher.
-
-```kotlin
-if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-    val activeAudioDevice = meetingSession.audioVideo.getActiveAudioDevice()
-}
-```
-
-For lower API levels, builders can achieve the same by tracking the selected device with the following logic:
-
-```kotlin
-var activeAudioDevice: MediaDevice? = null
-override fun onAudioDeviceChanged(freshAudioDeviceList: List<MediaDevice>) {
-    val device = /* An item from freshAudioDeviceList */
-    meetingSession.audioVideo.chooseAudioDevice(device)
-    activeAudioDevice = device // Update current device
-}
-```
-
-### Audio
-
-#### Use case 8. Choose the audio configuration.
-
-> When joining a meeting, each configuration will have a default if not explicitly specified when starting the audio session.
->
-> - Supported AudioMode options: *Mono/16KHz*, *Mono/48KHz*, and *Stereo/48KHz*. Default is *Stereo/48KHz*.
-> - Supported AudioDeviceCapabilities options: *Input and Output*, *Output Only*, and *None*. Default is *Input and Output*.
-> - Supported AudioStreamType options: *VoiceCall* and *Music*. Default is *VoiceCall*
-> - Supported AudioRecordingPresetOverride options: *None*, *Generic*, *Camcorder*, *VoiceRecognition* and *VoiceCommunication*. Default is *None*.
-> - Supported enableAudioRedundancy options: *true* and *false*. Default is *true*.
-> - Supported reconnectTimeoutMs values: Integers greater than or equal to 0. Default is *180,000*.
-
-```kotlin
-meetingSession.audioVideo.start() // starts the audio video session with defaults mentioned above
-
-meetingSession.audioVideo.start(audioVideoConfiguration) // starts the audio video session with the specified [AudioVideoConfiguration]
-```
-
-> Note: So far, you've added observers to receive device and session lifecycle events. In the following use cases, you'll use the real-time API methods to send and receive volume indicators and control mute state.
-
-#### Use case 9. Mute and unmute an audio input.
-
-```kotlin
-val muted = meetingSession.audioVideo.realtimeLocalMute() // returns true if muted, false if failed
-
-val unmuted = meetingSession.audioVideo.realtimeLocalUnmute() // returns true if unmuted, false if failed
-```
-
-#### Use case 10. Add an observer to receive realtime events such as volume changes/signal change/muted status attendees.
-
-You can use this to build real-time indicators UI and get them updated for changes delivered by the array.
-
-
-> Note: These callbacks will only include the delta from the previous callback.
-
-```kotlin
-val observer = object : RealtimeObserver {
-    override fun onVolumeChanged(volumeUpdates: Array<VolumeUpdate>) {
-        volumeUpdates.forEach { (attendeeInfo, volumeLevel) ->
-            logger.info(TAG, "${attendeeInfo.attendeeId}'s volume changed: " +
-                $volumeLevel // Muted, NotSpeaking, Low, Medium, High
-            )
-        }
-    }
-
-    override fun onSignalStrengthChanged(signalUpdates: Array<SignalUpdate>) {
-        signalUpdates.forEach { (attendeeInfo, signalStrength) ->
-            logger.info(TAG, "${attendeeInfo.attendeeId}'s signal strength changed: " +
-                $signalStrength // None, Low, High
-            )
-        }
-    }
-
-    override fun onAttendeesJoined(attendeeInfo: Array<AttendeeInfo>) {
-        attendeeInfo.forEach { logger.info(TAG, "${attendeeInfo.attendeeId} joined the meeting") }
-    }
-
-    override fun onAttendeesLeft(attendeeInfo: Array<AttendeeInfo>) {
-        attendeeInfo.forEach { logger.info(TAG, "${attendeeInfo.attendeeId} left the meeting") }
-    }
-
-    override fun onAttendeesDropped(attendeeInfo: Array<AttendeeInfo>) {
-        attendeeInfo.forEach { logger.info(TAG, "${attendeeInfo.attendeeId} dropped from the meeting") }
-    }
-
-    override fun onAttendeesMuted(attendeeInfo: Array<AttendeeInfo>) {
-        attendeeInfo.forEach { logger.info(TAG, "${attendeeInfo.attendeeId} muted") }
-    }
-
-    override fun onAttendeesUnmuted(attendeeInfo: Array<AttendeeInfo>) {
-        attendeeInfo.forEach { logger.info(TAG, "${attendeeInfo.attendeeId} unmuted") }
-    }
-}
-
-meetingSession.audioVideo.addRealtimeObserver(observer)
-```
-
-#### Use case 11. Detect active speakers and active scores of speakers.
-
-You can use the `onActiveSpeakerDetected` event to enlarge or emphasize the most active speaker’s video tile if available. By setting the `scoreCallbackIntervalMs` and implementing `onActiveSpeakerScoreChanged`, you can receive scores of the active speakers periodically.
-
-```kotlin
-val observer = object : ActiveSpeakerObserver {
-    override fun onActiveSpeakerDetected(attendeeInfo: Array<AttendeeInfo>) {
-        if (attendeeInfo.isNotEmpty()) {
-            logger.info(TAG, "${attendeeInfo[0].attendeeId} is the most active speaker")
-        }
-    }
-
-    // Set to receive onActiveSpeakerScoreChanged event at interval of 1s
-    override val scoreCallbackIntervalMs: Int? get() = 1000
-
-    override fun onActiveSpeakerScoreChanged(scores: Map<AttendeeInfo, Double>) {
-        val scoreString = scores.map { entry -> "${entry.key.attendeeId}: ${entry.value}" }.joinToString(",")
-        logger.info(TAG, "Scores of active speakers are: $scoreString")
-    }
-}
-
-// Calculating the active speaker base on the SDK provided policy, you can provide any custom algorithm
-meetingSession.audioVideo.addActiveSpeakerObserver(DefaultActiveSpeakerPolicy(), observer)
-```
-
-### Video
-
-> Note: You'll need to bind the video to a `VideoRenderView` to render it.
->
-> A local video tile can be identified using the `isLocalTile` property.
->
-> A content video tile can be identified using the `isContent` property. See [Screen and content share](#screen-and-content-share).
->
-> A tile is created with a new tile ID when the same remote attendee restarts the video.
-
-
-You can find more details on adding/removing/viewing video from [Building a meeting application on android using the Amazon Chime SDK](https://aws.amazon.com/blogs/business-productivity/building-a-meeting-application-on-android-using-the-amazon-chime-sdk/).
-
-#### Use case 12. Start receiving remote videos.
-
-You can call `startRemoteVideo` to start receiving remote videos, as this doesn’t happen by default.
-
-```kotlin
-meetingSession.audioVideo.startRemoteVideo()
-```
-
-#### Use case 13. Stop receiving remote videos.
-
-`stopRemoteVideo` stops receiving remote videos and triggers `onVideoTileRemoved` for existing remote videos.
-
-```kotlin
-meetingSession.audioVideo.stopRemoteVideo()
-```
-
-#### Use case 14. View remote videos.
-
-```kotlin
-val observer = object : VideoTileObserver {
-    override fun onVideoTileAdded(tileState: VideoTileState) {
-        // Ignore local video (see View local video), content video (seeScreen and content share)
-        if(tileState.isLocalTile || tileState.isContent) return
-
-        val videoRenderView = /* a VideoRenderView object in your application to show the video */
-        meetingSession.audioVideo.bindVideoView(videoRenderView, tileState.tileId)
-    }
-
-    override onVideoTileRemoved(tileState: VideoTileState) {
-        // unbind video view to stop viewing the tile
-        audioVideo.unbindVideoView(tileState.tileId)
-    }
-}
-
-meetingSession.audioVideo.addVideoTileObserver(observer)
-```
-
-For more advanced video tile management, take a look at [Video Pagination](https://github.com/aws/amazon-chime-sdk-android/blob/master/guides/video_pagination.md).
-
-#### Use case 15. Start sharing your video.
-
-```kotlin
-// Use internal camera capture for the local video
-meetingSession.audioVideo.startLocalVideo()
-
-// Use internal camera capture and set configuration for the video, e.g. maxBitRateKbps
-// If maxBitRateKbps is not set, it will be self adjusted depending on number of users and videos in the meeting
-// This can be called multiple times to dynamically adjust video configuration
-val localVideoConfig = LocalVideoConfiguration(600)
-meetingSession.audioVideo.startLocalVideo(localVideoConfig)
-
-// You can switch camera to change the video input device
-meetingSession.audioVideo.switchCamera()
-
-// Or you can inject custom video source for local video, see custom video guide
-```
-
-#### Use case 16. Stop sharing your video.
-
-```kotlin
-meetingSession.audioVideo.stopLocalVideo()
-```
-
-#### Use case 17. View local video.
-
-```kotlin
-val observer = object : VideoTileObserver {
-    override fun onVideoTileAdded(tileState: VideoTileState) {
-        // onVideoTileAdded is called after startLocalVideo
-        val localVideoRenderView = /* a VideoRenderView object to show local video */
-
-        if (tileState.isLocalTile) {
-            audioVideo.bindVideoView(localVideoRenderView, tileState.tileId)
-        }
-    }
-
-    override onVideoTileRemoved(tileState: VideoTileState) {
-        // onVideoTileRemoved is called after stopLocalVideo
-        if (tileState.isLocalTile) {
-            logger.info(TAG, "Local video is removed")
-            audioVideo.unbindVideoView(tileState.tileId)
-        }
-    }
-}
-
-meetingSession.audioVideo.addVideoTileObserver(observer)
-```
-
-### Screen and content share
-
-> Note: When you or other attendees share content (e.g., screen capture or any other VideoSource object), the content attendee (attendee-id#content) joins the session and shares content as if a regular attendee shares a video.
->
-> For example, your attendee ID is "my-id". When you call `meetingSession.audioVideo.startContentShare`, the content attendee "my-id#content" will join the session and share your content.
-
-#### Use case 18. Start sharing your screen or content.
-
-```kotlin
-val observer = object : ContentShareObserver {
-    override fun onContentShareStarted() {
-        logger.info(TAG, "Content share started")
-    }
-
-    override fun onContentShareStopped(status: ContentShareStatus) {
-        logger.info(TAG, "Content share stopped with status ${status.statusCode}")
-    }
-}
-
-meetingSession.audioVideo.addContentShareObserver(observer)
-val contentShareSource = /* a ContentShareSource object, can use DefaultScreenCaptureSource for screen share or any subclass with custom video source */
-// ContentShareSource object is not managed by SDK, builders need to start, stop, release accordingly
-meetingSession.audioVideo.startContentShare(contentShareSource)
-```
-
-You can set configuration for content share, e.g. maxBitRateKbps. Actual quality achieved may vary throughout the call depending on what system and network can provide.
-```kotlin
-val contentShareConfig = LocalVideoConfiguration(200)
-meetingSession.audioVideo.startContentShare(contentShareSource, contentShareConfig)
-```
-
-See [Content Share](https://github.com/aws/amazon-chime-sdk-android/blob/master/guides/content_share.md) for more details.
-
-#### Use case 19. Stop sharing your screen or content.
-
-```kotlin
-meetingSession.audioVideo.stopContentShare()
-```
-
-#### Use case 20. View attendee content or screens.
-
-Chime SDK allows two simultaneous content shares per meeting. Remote content shares will trigger `onVideoTileAdded`, while local share will not. To render the video for preview, add a `VideoSink` to the `VideoSource` in the `ContentShareSource`.
-
-```kotlin
-val observer = object : VideoTileObserver {
-    override fun onVideoTileAdded(tileState: VideoTileState) {
-        if (tileState.isContent) {
-            // tileState.attendeeId is formatted as "attendee-id#content"
-            val attendeeId = tileState.attendeeId
-            // Get the attendee ID from "attendee-id#content"
-            val baseAttendeeId = DefaultModality(attendeeId).base()
-            logger.info(TAG, "$baseAttendeeId is sharing screen")
-
-            val contentVideoRenderView = /* a VideoRenderView object in your application to show the content video */
-            meetingSession.audioVideo.bindVideoView(contentVideoRenderView, tileState.tileId)
-        }
-    }
-
-    override onVideoTileRemoved(tileState: VideoTileState) {
-        // unbind video view to stop viewing the tile
-        meetingSession.audioVideo.unbindVideoView(tileId)
-    }
-}
-
-meetingSession.audioVideo.addVideoTileObserver(observer)
-```
-
-### Metrics
-
-#### Use case 21. Add an observer to receive the meeting metrics.
-
-See `ObservableMetric` for more available metrics and to monitor audio, video, and content share quality.
-
-```kotlin
-val observer = object: MetricsObserver {
-    override fun onMetricsReceived(metrics: Map<ObservableMetric, Any>) {
-        metrics.forEach { (metricsName, metricsValue) ->
-            logger.info(TAG, "$metricsName : $metricsValue")
-        }
-    }
-}
-
-meetingSession.audioVideo.addMetricsObserver(observer)
-```
-
-### Data Message
-
-#### Use case 22. Add  an observer to receive data message.
-
-You can receive real-time messages from multiple topics after starting the meeting session.
-
-> Note: Data messages sent from local participant will not trigger this callback unless it's throttled.
-
-```kotlin
-val YOUR_ATTENDEE_ID = meetingSession.configuration.credentials.attendeeId
-
-val observer = object: DataMessageObserver {
-    override fun onDataMessageReceived(dataMessage: DataMessage) {
-        // A throttled message is returned by backend
-        if (!dataMessage.throttled) {
-            logger.info(TAG, "[${dataMessage.timestampMs}][{$dataMessage.senderAttendeeId}] : ${dataMessage.text()}")
-    }
-}
-
-// You can subscribe to multiple topics.
-const val DATA_MESSAGE_TOPIC = "chat"
-meetingSession.audioVideo.addRealtimeDataMessageObserver(DATA_MESSAGE_TOPIC, observer)
-```
-
-#### Use case 23. Send data message.
-
-You can send real time message to any topic, to which the observers that have subscribed will be notified.
-
-> Note: Topic needs to be alpha-numeric and it can include hyphen and underscores. Data cannot exceed 2kb and lifetime is optional but positive integer.
-
-```kotlin
-const val DATA_MESSAGE_TOPIC = "chat"
-const val DATA_MESSAGE_LIFETIME_MS = 1000
-
-// Send "Hello Chime" to any subscribers who are listening to "chat" topic with 1 seconds of lifetime
-meetingSession.audioVideo.realtimeSendDataMessage(
-    DATA_MESSAGE_TOPIC,
-    "Hello Chime",
-    DATA_MESSAGE_LIFETIME_MS
-)
-```
-
-### Stopping a session
-
-> Note: Make sure to remove all the observers and release resources you have added to avoid any memory leaks.
-
-#### Use case 24. Stop a session.
-
-```kotlin
-val observer = object: AudioVideoObserver {
-    override fun onAudioSessionStopped(sessionStatus: MeetingSessionStatus) {
-        // This is where meeting ended.
-        // You can do some clean up work here.
-    }
-
-    override fun onVideoSessionStopped(sessionStatus: MeetingSessionStatus) {
-        // This will be invoked as well.
-    }
-}
-
-meetingSession.audioVideo.addAudioVideoObserver(observer)
-meetingSession.audioVideo.stop()
-```
-
-### Amazon Voice Focus
-
-Amazon Voice Focus reduces the background noise in the meeting for better meeting experience. For more details, see [Amazon Voice Focus](https://github.com/aws/amazon-chime-sdk-android/blob/master/guides/api_overview.md#11-using-amazon-voice-focus-optional).
-
-#### Use case 25. Enable/Disable Amazon Voice Focus.
-
-```kotlin
-val enbabled = meetingSession.audioVideo.realtimeSetVoiceFocusEnabled(true) // enabling Amazon Voice Focus successful
-
-val disabled = meetingSession.audioVideo.realtimeSetVoiceFocusEnabled(false) // disabling Amazon Voice Focus successful
-```
-
-### Custom Video Source
-
-Custom video source allows you to control the video, such as applying a video filter. For more details, see [Custom Video](https://github.com/aws/amazon-chime-sdk-android/blob/master/guides/custom_video.md).
-
-### Background Blur and Replacement
-
-Background Blur/Replacement allows you to apply blur on or replace background of your video with an image. For more details, see [BackgroundFilter](guides/background_video_filters.md).
-
-### Redundant audio
-
-Starting from version 0.18.3, the SDK starts sending redundant audio data to our servers on detecting packet loss
-to help reduce its effect on audio quality. Redundant audio packets are only sent out for packets containing active
-audio, i.e. speech or music. This may increase the bandwidth consumed by audio to up to 3 times the normal amount
-depending on the amount of packet loss detected. The SDK will automatically stop sending redundant data if it hasn't
-detected any packet loss for 5 minutes.
-
-If you need to disable this feature, you can do so through the AudioVideoConfiguration before starting the session.
-
-```kotlin
-meetingSession.audioVideo.start(AudioVideoConfiguration(enableAudioRedundancy = false))
-```
-
-While there is an option to disable the feature, we recommend keeping it enabled for improved audio quality.
-One possible reason to disable it might be if your customers have very strict bandwidth limitations.
-
-## Frequently Asked Questions
-
-Refer to [General FAQ](https://aws.github.io/amazon-chime-sdk-js/modules/faqs.html) for Amazon Chime SDK.
-
-### Debugging
-
-#### How can I get Amazon Chime SDK logs for debugging?
-Applications can get logs from Chime SDK by passing instances of Logger when creating [MeetingSession](https://aws.github.io/amazon-chime-sdk-android/amazon-chime-sdk/com.amazonaws.services.chime.sdk.meetings.session/-meeting-session/index.html). Amazon Chime SDK has some default implementations of logger that your application can use, such as [ConsoleLogger](https://aws.github.io/amazon-chime-sdk-android/amazon-chime-sdk/com.amazonaws.services.chime.sdk.meetings.utils.logger/-console-logger/index.html) which logs into console. `ConsoleLogger` is set to `INFO` level as default. Therefore, in order to get all logs, including media logs, create logger by following:
-```kotlin
-val logger = ConsoleLogger(LogLevel.VERBOSE)
-```
-
-#### Remote attendees cannot hear my audio, what do I do?
-The SDK uses [OpenSL ES](https://developer.android.com/ndk/guides/audio/opensl/opensl-for-android) underneath which requires the setting of recording presets while opening the connection to the microphone device. We have discovered that there isn't a specific preset value that works well on all possible android devices. The SDK uses a default preset of `VoiceCommunication` which we have arrived at after running some tests on the devices in our possession. If this default preset does not work and is leading to the remote party not being able to hear you, please try starting the session with a different recording preset by specifying `audioRecordingPresetOverride` in the `AudioVideoConfiguration` that is passed into the start API.
-```kotlin
-// Creating a config where the preset is overriden with Generic (for example)
-val audioVideoConfig = AudioVideoConfiguration(audioRecordingPresetOverride = AudioRecordingPresetOverride.Generic)
-// Start Audio Video
-audioVideo.start(audioVideoConfig)
-```
-
-## Notice
-
-The use of background replacement is subject to additional notice. You and your end users are responsible for all Content (including any images) uploaded for use with background replacement, and must ensure that such Content does not violate the law, infringe or misappropriate the rights of any third party, or otherwise violate a material term of your agreement with Amazon (including the documentation, the AWS Service Terms, or the Acceptable Use Policy).
-
----
-
-Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+- [GitHub Issues](https://github.com/aws/amazon-chime-sdk-android/issues)를 통해 버그 리포트나 기능 요청을 제출하세요
+- [AWS 개발자 포럼](https://forums.aws.amazon.com/forum.jspa?forumID=357)에서 질문하세요
+- [AWS Support](https://aws.amazon.com/support/)를 통해 기술 지원을 받으세요
