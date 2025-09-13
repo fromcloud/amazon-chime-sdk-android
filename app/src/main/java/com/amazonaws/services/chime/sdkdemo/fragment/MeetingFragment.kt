@@ -129,6 +129,7 @@ import com.amazonaws.services.chime.sdkdemo.utils.encodeURLParam
 import com.amazonaws.services.chime.sdkdemo.utils.formatTimestamp
 import com.amazonaws.services.chime.sdkdemo.utils.isContentShare
 import com.amazonaws.services.chime.sdkdemo.utils.isLandscapeMode
+import com.amazonaws.services.chime.sdkdemo.model.RemoteControlManager
 import com.google.android.material.tabs.TabLayout
 import com.google.gson.Gson
 import java.net.URL
@@ -182,6 +183,7 @@ class MeetingFragment : Fragment(),
     private val CONTENT_NAME_SUFFIX = "<<Content>>"
 
     private val DATA_MESSAGE_TOPIC = "chat"
+    private val REMOTE_CONTROL_TOPIC = "remote_control"
     private val DATA_MESSAGE_LIFETIME_MS = 300000
 
     private var primaryExternalMeetingId: String? = null
@@ -279,6 +281,26 @@ class MeetingFragment : Fragment(),
             activity.getBackgroundReplacementVideoFrameProcessor()
         screenShareManager = activity.getScreenShareManager()
         audioDeviceManager = AudioDeviceManager(audioVideo)
+        
+        // Initialize remote control manager
+        meetingModel.remoteControlManager = RemoteControlManager(
+            audioVideo, 
+            credentials, 
+            gson,
+            onMuteStateChanged = { isMuted ->
+                meetingModel.isMuted = isMuted
+                activity?.runOnUiThread {
+                    refreshMuteStatus()
+                }
+            },
+            onSpeakerStateChanged = { isSpeakerDisabled ->
+                activity?.runOnUiThread {
+                    // UI 업데이트 로직 추가 가능
+                    logger.info(TAG, "Speaker state changed: disabled=$isSpeakerDisabled")
+                }
+            }
+        )
+        logger.info(TAG, "RemoteControlManager initialized for attendee: ${credentials.attendeeId}")
 
         val meetingEndpointUrl = arguments?.getString(HomeActivity.MEETING_ENDPOINT_KEY) as String
         postLogger = PostLogger(
@@ -391,9 +413,24 @@ class MeetingFragment : Fragment(),
         // Roster
         recyclerViewRoster = view.findViewById(R.id.recyclerViewRoster)
         recyclerViewRoster.layoutManager = LinearLayoutManager(activity)
-        rosterAdapter = RosterAdapter(meetingModel.currentRoster.values)
+        rosterAdapter = RosterAdapter(meetingModel.currentRoster.values) { attendeeId, isMuted ->
+            // Handle remote control click
+            meetingModel.remoteControlManager?.let { manager ->
+                if (manager.isMeetingCreator()) {
+                    if (isMuted) {
+                        manager.sendUnmuteCommand(attendeeId)
+                        notifyHandler("Unmute command sent")
+                    } else {
+                        manager.sendMuteCommand(attendeeId)
+                        notifyHandler("Mute command sent")
+                    }
+                }
+            }
+        }
         recyclerViewRoster.adapter = rosterAdapter
         recyclerViewRoster.visibility = View.VISIBLE
+        
+        logger.info(TAG, "Remote control manager initialized: ${meetingModel.remoteControlManager != null}")
 
         // Video (camera & content)
         viewVideo = view.findViewById(R.id.subViewVideo)
@@ -970,14 +1007,27 @@ class MeetingFragment : Fragment(),
     }
 
     private fun toggleMute() {
-        if (meetingModel.isMuted) {
+        val success = if (meetingModel.isMuted) {
             audioVideo.realtimeLocalUnmute()
-            buttonMute.setImageResource(R.drawable.button_mute)
         } else {
             audioVideo.realtimeLocalMute()
-            buttonMute.setImageResource(R.drawable.button_mute_on)
         }
-        meetingModel.isMuted = !meetingModel.isMuted
+        
+        if (success) {
+            meetingModel.isMuted = !meetingModel.isMuted
+            buttonMute.setImageResource(if (meetingModel.isMuted) R.drawable.button_mute_on else R.drawable.button_mute)
+            logger.info(TAG, "Mute toggled successfully. New state: muted=${meetingModel.isMuted}")
+        } else {
+            logger.warn(TAG, "Failed to toggle mute state")
+            notifyHandler("Failed to change microphone state")
+        }
+    }
+
+    private fun refreshMuteStatus() {
+        if (::buttonMute.isInitialized) {
+            buttonMute.setImageResource(if (meetingModel.isMuted) R.drawable.button_mute_on else R.drawable.button_mute)
+            logger.info(TAG, "Mute status refreshed: muted=${meetingModel.isMuted}")
+        }
     }
 
     private fun toggleSpeaker() {
@@ -1833,18 +1883,37 @@ class MeetingFragment : Fragment(),
 
     override fun onDataMessageReceived(dataMessage: DataMessage) {
         if (!dataMessage.throttled) {
-            if (dataMessage.timestampMs <= meetingModel.lastReceivedMessageTimestamp) return
-            meetingModel.lastReceivedMessageTimestamp = dataMessage.timestampMs
-            meetingModel.currentMessages.add(
-                Message(
-                    getAttendeeName(dataMessage.senderAttendeeId, dataMessage.senderExternalUserId),
-                    dataMessage.timestampMs,
-                    dataMessage.text(),
-                    isSelfAttendee(dataMessage.senderAttendeeId)
+            // Handle remote control messages
+            if (dataMessage.topic == REMOTE_CONTROL_TOPIC) {
+                logger.info(TAG, "Received remote control message: ${dataMessage.text()}")
+                val handled = meetingModel.remoteControlManager?.handleRemoteControlMessage(dataMessage.text())
+                logger.info(TAG, "Remote control message handled: $handled")
+                
+                if (handled == true) {
+                    // Update UI state after remote control
+                    uiScope.launch {
+                        buttonMute.setImageResource(if (meetingModel.isMuted) R.drawable.button_mute_on else R.drawable.button_mute)
+                    }
+                    notifyHandler("Audio control received from meeting host")
+                }
+                return
+            }
+            
+            // Handle chat messages
+            if (dataMessage.topic == DATA_MESSAGE_TOPIC) {
+                if (dataMessage.timestampMs <= meetingModel.lastReceivedMessageTimestamp) return
+                meetingModel.lastReceivedMessageTimestamp = dataMessage.timestampMs
+                meetingModel.currentMessages.add(
+                    Message(
+                        getAttendeeName(dataMessage.senderAttendeeId, dataMessage.senderExternalUserId),
+                        dataMessage.timestampMs,
+                        dataMessage.text(),
+                        isSelfAttendee(dataMessage.senderAttendeeId)
+                    )
                 )
-            )
-            messageAdapter.notifyItemInserted(meetingModel.currentMessages.size - 1)
-            scrollToLastMessage()
+                messageAdapter.notifyItemInserted(meetingModel.currentMessages.size - 1)
+                scrollToLastMessage()
+            }
         } else {
             notifyHandler("Message is throttled. Please resend")
         }
@@ -1896,6 +1965,7 @@ class MeetingFragment : Fragment(),
         audioVideo.addMetricsObserver(this)
         audioVideo.addRealtimeObserver(this)
         audioVideo.addRealtimeDataMessageObserver(DATA_MESSAGE_TOPIC, this)
+        audioVideo.addRealtimeDataMessageObserver(REMOTE_CONTROL_TOPIC, this)
         audioVideo.addVideoTileObserver(this)
         audioVideo.addActiveSpeakerObserver(DefaultActiveSpeakerPolicy(), this)
         audioVideo.addContentShareObserver(this)
@@ -1909,6 +1979,7 @@ class MeetingFragment : Fragment(),
         audioVideo.removeMetricsObserver(this)
         audioVideo.removeRealtimeObserver(this)
         audioVideo.removeRealtimeDataMessageObserverFromTopic(DATA_MESSAGE_TOPIC)
+        audioVideo.removeRealtimeDataMessageObserverFromTopic(REMOTE_CONTROL_TOPIC)
         audioVideo.removeVideoTileObserver(this)
         audioVideo.removeActiveSpeakerObserver(this)
         audioVideo.removeContentShareObserver(this)

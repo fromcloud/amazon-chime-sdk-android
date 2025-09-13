@@ -93,6 +93,7 @@ class MeetingModel : ViewModel() {
     }
     var isScreenShareServiceBound = false
     var screenShareServiceConnection: ServiceConnection? = null
+    var remoteControlManager: RemoteControlManager? = null
 
     fun getRemoteVideoTileStates(): List<VideoCollectionTile> {
         return remoteVideoTileStates

@@ -16,7 +16,8 @@ import com.amazonaws.services.chime.sdkdemo.data.RosterAttendee
 import com.amazonaws.services.chime.sdkdemo.databinding.RowRosterBinding
 import com.amazonaws.services.chime.sdkdemo.utils.inflate
 class RosterAdapter(
-    private val roster: Collection<RosterAttendee>
+    private val roster: Collection<RosterAttendee>,
+    private val onRemoteControlClick: ((String, Boolean) -> Unit)? = null
 ) :
     RecyclerView.Adapter<RosterHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RosterHolder {
@@ -30,7 +31,7 @@ class RosterAdapter(
 
     override fun onBindViewHolder(holder: RosterHolder, position: Int) {
         val attendee = roster.elementAt(position)
-        holder.bindAttendee(attendee)
+        holder.bindAttendee(attendee, onRemoteControlClick)
     }
 }
 
@@ -39,12 +40,18 @@ class RosterHolder(inflatedView: View) :
 
     private val binding = RowRosterBinding.bind(inflatedView)
 
-    fun bindAttendee(attendee: RosterAttendee) {
+    fun bindAttendee(attendee: RosterAttendee, onRemoteControlClick: ((String, Boolean) -> Unit)? = null) {
         val attendeeName = attendee.attendeeName
         binding.attendeeName.text = attendeeName
         binding.attendeeName.contentDescription = attendeeName
         binding.activeSpeakerIndicator.visibility = if (attendee.isActiveSpeaker) View.VISIBLE else View.INVISIBLE
         binding.activeSpeakerIndicator.contentDescription = if (attendee.isActiveSpeaker) "${attendee.attendeeName} Active" else ""
+        
+        // Add click listener for remote control
+        binding.attendeeVolume.setOnClickListener {
+            val isMuted = attendee.volumeLevel == VolumeLevel.Muted
+            onRemoteControlClick?.invoke(attendee.attendeeId, isMuted)
+        }
 
         if (attendee.attendeeStatus == AttendeeStatus.Joined) {
             if (attendee.signalStrength == SignalStrength.None ||

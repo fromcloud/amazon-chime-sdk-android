@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Android Remote Control UI Example</title>
+    <style>
+        .attendee-control {
+            border: 1px solid #ccc;
+            margin: 10px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .control-button {
+            margin: 5px;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .mute-btn { background-color: #ff4444; color: white; }
+        .unmute-btn { background-color: #44ff44; color: white; }
+        .speaker-disable-btn { background-color: #ff8844; color: white; }
+        .speaker-enable-btn { background-color: #4488ff; color: white; }
+    </style>
+</head>
+<body>
+    <h1>Android App Remote Control</h1>
+    <div id="attendee-controls"></div>
+
+    <script>
+        // This should be integrated with your existing Chime SDK web app
+        class AndroidRemoteControlUI {
+            constructor(meetingSession, remoteController) {
+                this.meetingSession = meetingSession;
+                this.remoteController = remoteController;
+                this.attendees = new Map();
+                
+                // Subscribe to roster updates
+                this.meetingSession.audioVideo.addRealtimeObserver({
+                    attendeeIdPresenceHandler: (attendeeId, present) => {
+                        if (present) {
+                            this.addAttendee(attendeeId);
+                        } else {
+                            this.removeAttendee(attendeeId);
+                        }
+                    }
+                });
+            }
+
+            addAttendee(attendeeId) {
+                // Skip if it's the current user
+                if (attendeeId === this.meetingSession.configuration.credentials.attendeeId) {
+                    return;
+                }
+
+                this.attendees.set(attendeeId, {
+                    id: attendeeId,
+                    isMuted: false,
+                    isSpeakerDisabled: false
+                });
+                
+                this.renderAttendeeControls();
+            }
+
+            removeAttendee(attendeeId) {
+                this.attendees.delete(attendeeId);
+                this.renderAttendeeControls();
+            }
+
+            renderAttendeeControls() {
+                const container = document.getElementById('attendee-controls');
+                container.innerHTML = '';
+
+                this.attendees.forEach((attendee, attendeeId) => {
+                    const controlDiv = document.createElement('div');
+                    controlDiv.className = 'attendee-control';
+                    
+                    controlDiv.innerHTML = `
+                        <h3>Attendee: ${attendeeId}</h3>
+                        <button class="control-button mute-btn" onclick="remoteControlUI.muteAttendee('${attendeeId}')">
+                            Mute Mic
+                        </button>
+                        <button class="control-button unmute-btn" onclick="remoteControlUI.unmuteAttendee('${attendeeId}')">
+                            Unmute Mic
+                        </button>
+                        <button class="control-button speaker-disable-btn" onclick="remoteControlUI.disableSpeaker('${attendeeId}')">
+                            Disable Speaker
+                        </button>
+                        <button class="control-button speaker-enable-btn" onclick="remoteControlUI.enableSpeaker('${attendeeId}')">
+                            Enable Speaker
+                        </button>
+                    `;
+                    
+                    container.appendChild(controlDiv);
+                });
+            }
+
+            muteAttendee(attendeeId) {
+                this.remoteController.muteAndroidUser(attendeeId);
+                console.log(`Muting attendee: ${attendeeId}`);
+            }
+
+            unmuteAttendee(attendeeId) {
+                this.remoteController.unmuteAndroidUser(attendeeId);
+                console.log(`Unmuting attendee: ${attendeeId}`);
+            }
+
+            disableSpeaker(attendeeId) {
+                this.remoteController.disableAndroidUserSpeaker(attendeeId);
+                console.log(`Disabling speaker for attendee: ${attendeeId}`);
+            }
+
+            enableSpeaker(attendeeId) {
+                this.remoteController.enableAndroidUserSpeaker(attendeeId);
+                console.log(`Enabling speaker for attendee: ${attendeeId}`);
+            }
+        }
+
+        // Initialize when your meeting session is ready
+        // const remoteController = new AndroidRemoteController(meetingSession);
+        // const remoteControlUI = new AndroidRemoteControlUI(meetingSession, remoteController);
+        // window.remoteControlUI = remoteControlUI; // Make it globally accessible for button clicks
+    </script>
+</body>
+</html>
